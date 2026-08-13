@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAEES ABID — Strength Coaching</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --red: #E8272A;
+    --red-deep: #8f1416;
+    --black: #0A0A0A;
+    --black-soft: #141414;
+    --off-white: #F2F1EC;
+    --gray: #8A8A85;
+    --line: rgba(242,241,236,0.1);
+    --ease: cubic-bezier(.22,1,.36,1);
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--black);
+    color:var(--off-white);
+    font-family:'Inter',sans-serif;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; scroll-behavior:auto !important;}
+  }
+
+  a{color:inherit;text-decoration:none;}
+  ::selection{background:var(--red);color:var(--black);}
+
+  .display{
+    font-family:'Bebas Neue',sans-serif;
+    letter-spacing:0.01em;
+    line-height:0.9;
+    text-transform:uppercase;
+  }
+  .mono{font-family:'JetBrains Mono',monospace;}
+
+  .wrap{max-width:1180px;margin:0 auto;padding:0 32px;}
+
+  /* ---------- progress / pulse rail ---------- */
+  #pulse-rail{
+    position:fixed;top:0;left:0;height:3px;width:0%;
+    background:var(--red);
+    z-index:999;
+    transition:width 0.08s linear;
+    box-shadow:0 0 12px var(--red);
+  }
+
+  /* ---------- nav ---------- */
+  header{
+    position:fixed;top:0;left:0;right:0;z-index:900;
+    padding:26px 0;
+    transition:padding 0.4s var(--ease), background 0.4s var(--ease), border-color 0.4s var(--ease);
+    border-bottom:1px solid transparent;
+  }
+  header.scrolled{
+    padding:14px 0;
+    background:rgba(10,10,10,0.85);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  nav{display:flex;align-items:center;justify-content:space-between;}
+  .logo{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:22px;
+    letter-spacing:0.06em;
+  }
+  .logo span{color:var(--red);}
+  .nav-links{display:flex;gap:40px;list-style:none;}
+  .nav-links a{
+    font-size:13px;letter-spacing:0.08em;text-transform:uppercase;
+    color:var(--gray);
+    position:relative;
+    padding-bottom:4px;
+  }
+  .nav-links a::after{
+    content:'';position:absolute;left:0;bottom:0;width:0;height:1px;
+    background:var(--red);transition:width 0.3s var(--ease);
+  }
+  .nav-links a:hover{color:var(--off-white);}
+  .nav-links a:hover::after{width:100%;}
+  .nav-cta{
+    font-size:12px;letter-spacing:0.08em;text-transform:uppercase;
+    border:1px solid var(--off-white);
+    padding:10px 20px;
+    transition:all 0.3s var(--ease);
+  }
+  .nav-cta:hover{background:var(--red);border-color:var(--red);color:var(--black);}
+  .burger{display:none;}
+
+  /* ---------- hero ---------- */
+  #hero{
+    min-height:100vh;
+    display:flex;flex-direction:column;justify-content:center;
+    position:relative;
+    padding-top:120px;
+    background:
+      radial-gradient(circle at 82% 20%, rgba(232,39,42,0.16), transparent 55%),
+      linear-gradient(180deg, #0A0A0A 0%, #0A0A0A 100%);
+  }
+  #hero::before{
+    content:'';
+    position:absolute;inset:0;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size:64px 64px;
+    -webkit-mask-image:linear-gradient(180deg, transparent, rgba(0,0,0,0.6) 40%, transparent 85%);
+    mask-image:linear-gradient(180deg, transparent, rgba(0,0,0,0.6) 40%, transparent 85%);
+    opacity:0.6;
+    pointer-events:none;
+  }
+  .eyebrow{
+    display:flex;align-items:center;gap:10px;
+    font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:var(--gray);
+    opacity:0;transform:translateY(14px);
+    animation:rise 0.8s var(--ease) 0.1s forwards;
+  }
+  .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--red);animation:pulse-dot 1.6s ease-in-out infinite;}
+  @keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.35;transform:scale(1.4);}}
+
+  .hero-title{
+    font-size:clamp(58px, 9.4vw, 148px);
+    margin-top:18px;
+  }
+  .hero-title .line{
+    display:block;overflow:hidden;
+  }
+  .hero-title .line span{
+    display:block;
+    transform:translateY(105%);
+    animation:rise-line 0.9s var(--ease) forwards;
+  }
+  .hero-title .line:nth-child(1) span{animation-delay:0.15s;}
+  .hero-title .line:nth-child(2) span{animation-delay:0.28s;color:var(--red);}
+  .hero-title .line:nth-child(3) span{animation-delay:0.41s;}
+  @keyframes rise-line{to{transform:translateY(0);}}
+  @keyframes rise{to{opacity:1;transform:translateY(0);}}
+
+  .hero-sub{
+    max-width:440px;margin-top:28px;
+    color:var(--gray);font-size:16px;line-height:1.7;
+    opacity:0;transform:translateY(14px);
+    animation:rise 0.8s var(--ease) 0.6s forwards;
+  }
+  .hero-actions{
+    display:flex;align-items:center;gap:28px;margin-top:42px;
+    opacity:0;transform:translateY(14px);
+    animation:rise 0.8s var(--ease) 0.75s forwards;
+  }
+  .btn-primary{
+    background:var(--red);color:var(--black);
+    padding:16px 32px;
+    font-size:13px;letter-spacing:0.08em;text-transform:uppercase;font-weight:600;
+    position:relative;overflow:hidden;
+    transition:transform 0.3s var(--ease);
+  }
+  .btn-primary span{position:relative;z-index:2;}
+  .btn-primary::before{
+    content:'';position:absolute;inset:0;background:var(--off-white);
+    transform:translateX(-101%);transition:transform 0.35s var(--ease);
+  }
+  .btn-primary:hover::before{transform:translateX(0);}
+  .btn-primary:hover{transform:translateY(-2px);}
+
+  .btn-ghost{
+    font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:var(--off-white);
+    display:flex;align-items:center;gap:10px;
+  }
+  .btn-ghost .arrow{transition:transform 0.3s var(--ease);}
+  .btn-ghost:hover .arrow{transform:translateX(6px);}
+
+  .hero-scroll{
+    position:absolute;bottom:40px;left:32px;
+    display:flex;align-items:center;gap:10px;
+    font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--gray);
+    opacity:0;animation:rise 0.8s var(--ease) 1s forwards;
+  }
+  .hero-scroll .bar{width:1px;height:34px;background:var(--line);position:relative;overflow:hidden;}
+  .hero-scroll .bar::after{
+    content:'';position:absolute;top:-100%;left:0;width:100%;height:100%;
+    background:var(--red);
+    animation:scrollbar 1.8s ease-in-out infinite;
+  }
+  @keyframes scrollbar{0%{top:-100%;}50%{top:0%;}100%{top:100%;}}
+
+  /* ---------- reveal on scroll ---------- */
+  .reveal{opacity:0;transform:translateY(36px);transition:opacity 0.9s var(--ease), transform 0.9s var(--ease);}
+  .reveal.in{opacity:1;transform:translateY(0);}
+  .reveal-delay-1{transition-delay:0.1s;}
+  .reveal-delay-2{transition-delay:0.2s;}
+  .reveal-delay-3{transition-delay:0.3s;}
+
+  /* ---------- section label ---------- */
+  .section-label{
+    display:flex;align-items:center;gap:14px;
+    font-size:12px;letter-spacing:0.16em;text-transform:uppercase;color:var(--red);
+    margin-bottom:20px;
+  }
+  .section-label::before{content:'';width:28px;height:1px;background:var(--red);}
+  .section-head{
+    font-size:clamp(34px,4.4vw,58px);
+    max-width:600px;
+  }
+
+  section{padding:130px 0;position:relative;}
+  .border-top{border-top:1px solid var(--line);}
+
+  /* ---------- stats ---------- */
+  #stats .wrap{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:40px;
+  }
+  .stat-num{
+    font-family:'JetBrains Mono',monospace;
+    font-size:clamp(38px,4.4vw,64px);
+    font-weight:700;color:var(--off-white);
+    display:flex;align-items:baseline;gap:4px;
+  }
+  .stat-num .unit{font-size:0.4em;color:var(--red);}
+  .stat-label{margin-top:10px;font-size:13px;color:var(--gray);letter-spacing:0.04em;}
+
+  /* ---------- about ---------- */
+  #about .wrap{display:grid;grid-template-columns:0.85fr 1.15fr;gap:90px;align-items:center;}
+  .coach-frame{
+    aspect-ratio:4/5;
+    background:linear-gradient(155deg, var(--black-soft), #050505 60%, var(--red-deep) 140%);
+    position:relative;
+    border:1px solid var(--line);
+    overflow:hidden;
+  }
+  .coach-frame::before{
+    content:'RA';
+    position:absolute;inset:0;
+    font-family:'Bebas Neue',sans-serif;
+    font-size:260px;color:rgba(242,241,236,0.045);
+    display:flex;align-items:center;justify-content:center;
+    letter-spacing:0.02em;
+  }
+  .coach-frame .tag{
+    position:absolute;bottom:24px;left:24px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;color:var(--gray);
+    letter-spacing:0.05em;
+  }
+  .coach-frame .corner{
+    position:absolute;width:22px;height:22px;
+    border-color:var(--red);border-style:solid;border-width:0;
+  }
+  .coach-frame .corner.tl{top:16px;left:16px;border-top-width:2px;border-left-width:2px;}
+  .coach-frame .corner.br{bottom:16px;right:16px;border-bottom-width:2px;border-right-width:2px;}
+
+  .about-body p{color:var(--gray);font-size:16px;line-height:1.85;margin-top:22px;max-width:520px;}
+  .about-body p strong{color:var(--off-white);font-weight:500;}
+  .credentials{display:flex;flex-wrap:wrap;gap:12px;margin-top:36px;}
+  .credentials span{
+    font-size:11px;letter-spacing:0.06em;text-transform:uppercase;
+    border:1px solid var(--line);padding:9px 16px;color:var(--gray);
+  }
+
+  /* ---------- programs ---------- */
+  .program-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
+    background:var(--line);
+    margin-top:60px;
+    border:1px solid var(--line);
+  }
+  .program-card{
+    background:var(--black);
+    padding:44px 34px;
+    transition:background 0.4s var(--ease);
+    position:relative;
+    overflow:hidden;
+  }
+  .program-card::after{
+    content:'';position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--red);
+    transform:scaleX(0);transform-origin:left;transition:transform 0.4s var(--ease);
+  }
+  .program-card:hover{background:var(--black-soft);}
+  .program-card:hover::after{transform:scaleX(1);}
+  .program-card:hover .p-num{color:var(--red);}
+  .program-card:hover .p-icon{transform:translate(4px,-4px) rotate(8deg);}
+  .p-num{
+    font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--gray);
+    transition:color 0.3s var(--ease);
+  }
+  .p-icon{
+    width:34px;height:34px;margin-top:26px;
+    transition:transform 0.4s var(--ease);
+  }
+  .p-title{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:0.01em;margin-top:20px;}
+  .p-desc{color:var(--gray);font-size:14.5px;line-height:1.7;margin-top:14px;}
+  .p-meta{margin-top:26px;font-size:12px;color:var(--red);letter-spacing:0.05em;text-transform:uppercase;font-family:'JetBrains Mono',monospace;}
+
+  /* ---------- results marquee ---------- */
+  #results{padding:110px 0;overflow:hidden;}
+  .marquee-track{display:flex;gap:64px;width:max-content;animation:marquee 26s linear infinite;}
+  .marquee-track:hover{animation-play-state:paused;}
+  @keyframes marquee{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+  .marquee-item{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:clamp(40px,6vw,80px);
+    color:transparent;
+    -webkit-text-stroke:1px var(--line);
+    white-space:nowrap;
+    display:flex;align-items:center;gap:64px;
+  }
+  .marquee-item b{-webkit-text-stroke:0;color:var(--red);font-weight:400;}
+
+  /* ---------- testimonials ---------- */
+  .testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:60px;}
+  .testi-card{
+    border:1px solid var(--line);padding:32px 28px;
+    transition:border-color 0.35s var(--ease), transform 0.35s var(--ease);
+  }
+  .testi-card:hover{border-color:var(--red);transform:translateY(-6px);}
+  .testi-quote{font-size:15.5px;line-height:1.75;color:var(--off-white);}
+  .testi-meta{display:flex;align-items:center;gap:12px;margin-top:26px;}
+  .testi-avatar{
+    width:38px;height:38px;border-radius:50%;
+    background:linear-gradient(140deg,var(--red),var(--red-deep));
+    display:flex;align-items:center;justify-content:center;
+    font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;
+  }
+  .testi-name{font-size:13px;}
+  .testi-role{font-size:12px;color:var(--gray);}
+
+  /* ---------- cta ---------- */
+  #cta{
+    padding:150px 0;text-align:center;position:relative;
+    background:radial-gradient(circle at 50% 30%, rgba(232,39,42,0.14), transparent 60%);
+  }
+  #cta .display{font-size:clamp(44px,7.4vw,104px);}
+  #cta .display em{font-style:normal;color:var(--red);}
+  #cta p{color:var(--gray);margin-top:22px;font-size:16px;}
+  #cta .btn-primary{margin-top:44px;padding:19px 44px;font-size:14px;}
+
+  /* ---------- footer ---------- */
+  footer{border-top:1px solid var(--line);padding:50px 0;}
+  footer .wrap{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px;}
+  .foot-links{display:flex;gap:30px;list-style:none;}
+  .foot-links a{font-size:13px;color:var(--gray);}
+  .foot-links a:hover{color:var(--off-white);}
+  .foot-copy{font-size:12px;color:var(--gray);font-family:'JetBrains Mono',monospace;}
+
+  @media(max-width:920px){
+    .nav-links{display:none;}
+    #about .wrap{grid-template-columns:1fr;gap:50px;}
+    #stats .wrap{grid-template-columns:repeat(2,1fr);row-gap:44px;}
+    .program-grid{grid-template-columns:1fr;}
+    .testi-grid{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<div id="pulse-rail"></div>
+
+<header id="site-header">
+  <div class="wrap">
+    <nav>
+      <div class="logo">RAEES<span>ABID</span></div>
+      <ul class="nav-links">
+        <li><a href="#about">About</a></li>
+        <li><a href="#programs">Programs</a></li>
+        <li><a href="#results">Results</a></li>
+        <li><a href="#testimonials">Athletes</a></li>
+      </ul>
+      <a href="#cta" class="nav-cta">Book a Call</a>
+    </nav>
+  </div>
+</header>
+
+<section id="hero">
+  <div class="wrap">
+    <div class="eyebrow"><span class="dot"></span> STRENGTH &amp; PHYSIQUE COACHING — ONLINE &amp; IN-PERSON</div>
+    <h1 class="hero-title display">
+      <span class="line"><span>DISCIPLINE</span></span>
+      <span class="line"><span>OVER</span></span>
+      <span class="line"><span>MOTIVATION.</span></span>
+    </h1>
+    <p class="hero-sub">I build training and nutrition systems for people done negotiating with themselves. No fads, no fluff — just measured progress, week after week.</p>
+    <div class="hero-actions">
+      <a href="#cta" class="btn-primary"><span>Start Coaching</span></a>
+      <a href="#programs" class="btn-ghost">View Programs <span class="arrow">→</span></a>
+    </div>
+  </div>
+  <div class="hero-scroll"><div class="bar"></div> SCROLL</div>
+</section>
+
+<section id="stats" class="border-top">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="stat-num" data-count="3"><span class="val">0</span><span class="unit">YRS</span></div>
+      <div class="stat-label">Personal training experience</div>
+    </div>
+    <div class="reveal reveal-delay-1">
+      <div class="stat-num" data-count="30"><span class="val">0</span><span class="unit">+</span></div>
+      <div class="stat-label">Athletes transformed</div>
+    </div>
+    <div class="reveal reveal-delay-2">
+      <div class="stat-num" data-count="95"><span class="val">0</span><span class="unit">%</span></div>
+      <div class="stat-label">Client retention rate</div>
+    </div>
+    <div class="reveal reveal-delay-3">
+      <div class="stat-num" data-count="12"><span class="val">0</span><span class="unit">WK</span></div>
+      <div class="stat-label">Avg. program length</div>
+    </div>
+  </div>
+</section>
+
+<section id="about" class="border-top">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="coach-frame">
+        <span class="corner tl"></span><span class="corner br"></span>
+        <span class="tag">COACH_RA / EST. 2024</span>
+      </div>
+    </div>
+    <div class="about-body reveal reveal-delay-1">
+      <div class="section-label">About your coach</div>
+      <h2 class="section-head display">Built over 2.5 years, one honest rep at a time</h2>
+      <p>My own physique wasn't built overnight — 2.5 years of consistent training and disciplined nutrition got me here, and that's exactly the process I coach. <strong>My approach is simple:</strong> train hard, recover harder, and track everything that matters.</p>
+      <p>Every plan is built around your schedule, your joints, and your actual life — not a template pulled off a shelf.</p>
+      <div class="credentials">
+        <span>Self-Built Transformation</span>
+        <span>Strength &amp; Physique Coaching</span>
+        <span>Nutrition Guidance</span>
+        <span>Personalized Programming</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="programs" class="border-top">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="section-label">What I coach</div>
+      <h2 class="section-head display">Three ways to train with me</h2>
+    </div>
+    <div class="program-grid reveal reveal-delay-1">
+
+      <div class="program-card">
+        <div class="p-num">01</div>
+        <svg class="p-icon" viewBox="0 0 24 24" fill="none" stroke="#E8272A" stroke-width="1.6"><path d="M4 12h2M18 12h2M6 8v8M18 8v8M8 12h8" stroke-linecap="round"/></svg>
+        <div class="p-title">Strength Building</div>
+        <p class="p-desc">Structured barbell programming to build a foundation of raw, usable strength — periodized around your lifts and your life.</p>
+        <div class="p-meta">12 Week Blocks</div>
+      </div>
+
+      <div class="program-card">
+        <div class="p-num">02</div>
+        <svg class="p-icon" viewBox="0 0 24 24" fill="none" stroke="#E8272A" stroke-width="1.6"><path d="M12 3v3M12 18v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M3 12h3M18 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1" stroke-linecap="round"/><circle cx="12" cy="12" r="4"/></svg>
+        <div class="p-title">Body Recomposition</div>
+        <p class="p-desc">Lose fat, keep the muscle. Nutrition coaching paired with training built to protect strength while the scale moves.</p>
+        <div class="p-meta">16 Week Blocks</div>
+      </div>
+
+      <div class="program-card">
+        <div class="p-num">03</div>
+        <svg class="p-icon" viewBox="0 0 24 24" fill="none" stroke="#E8272A" stroke-width="1.6"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z" stroke-linejoin="round"/></svg>
+        <div class="p-title">Athletic Performance</div>
+        <p class="p-desc">Speed, power, and conditioning work for athletes who need the gym to translate directly to the field.</p>
+        <div class="p-meta">8 Week Blocks</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="results" class="border-top">
+  <div class="marquee-track">
+    <div class="marquee-item">STRENGTH <b>+</b> DISCIPLINE <b>+</b> CONSISTENCY <b>+</b> RESULTS <b>+</b></div>
+    <div class="marquee-item">STRENGTH <b>+</b> DISCIPLINE <b>+</b> CONSISTENCY <b>+</b> RESULTS <b>+</b></div>
+  </div>
+</section>
+
+<section id="testimonials" class="border-top">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="section-label">Athlete feedback</div>
+      <h2 class="section-head display">People who did the work</h2>
+    </div>
+    <div class="testi-grid reveal reveal-delay-1">
+
+      <div class="testi-card">
+        <p class="testi-quote">"Twelve weeks in and my squat finally moved after two years stuck. Raees caught what three other programs missed."</p>
+        <div class="testi-meta">
+          <div class="testi-avatar">DK</div>
+          <div><div class="testi-name">Daniyal K.</div><div class="testi-role">Strength Client, 8 months</div></div>
+        </div>
+      </div>
+
+      <div class="testi-card">
+        <p class="testi-quote">"Dropped 14kg without losing a single working set. The check-ins kept me honest when I wanted to skip."</p>
+        <div class="testi-meta">
+          <div class="testi-avatar">SR</div>
+          <div><div class="testi-name">Sana R.</div><div class="testi-role">Recomp Client, 16 weeks</div></div>
+        </div>
+      </div>
+
+      <div class="testi-card">
+        <p class="testi-quote">"First coach who actually programmed around my match schedule instead of ignoring it. Big difference on the field."</p>
+        <div class="testi-meta">
+          <div class="testi-avatar">AH</div>
+          <div><div class="testi-name">Ali H.</div><div class="testi-role">Performance Client, 1 year</div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="cta" class="border-top">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="section-label" style="justify-content:center;">Start today</div>
+      <h2 class="display">STOP <em>WAITING</em><br>FOR MONDAY</h2>
+      <p>Free 15-minute call. No pitch — just a look at where you are and what it'll take.</p>
+      <a href="#" class="btn-primary"><span>Book Your Free Call</span></a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="logo">RAEES<span>ABID</span></div>
+    <ul class="foot-links">
+      <li><a href="#">Instagram</a></li>
+      <li><a href="#">YouTube</a></li>
+      <li><a href="mailto:coach@raeesabid.com">Email</a></li>
+    </ul>
+    <div class="foot-copy">© 2026 RAEES ABID COACHING</div>
+  </div>
+</footer>
+
+<script>
+  // header shrink + scroll pulse rail
+  const header = document.getElementById('site-header');
+  const rail = document.getElementById('pulse-rail');
+  window.addEventListener('scroll', () => {
+    header.classList.toggle('scrolled', window.scrollY > 40);
+    const h = document.documentElement;
+    const pct = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+    rail.style.width = pct + '%';
+  });
+
+  // scroll reveal
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+  }, { threshold: 0.15 });
+  revealEls.forEach(el => io.observe(el));
+
+  // count-up stats
+  const counters = document.querySelectorAll('.stat-num');
+  const countIO = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const el = entry.target;
+        const target = parseInt(el.dataset.count, 10);
+        const valEl = el.querySelector('.val');
+        let start = 0;
+        const duration = 1400;
+        const startTime = performance.now();
+        function tick(now) {
+          const progress = Math.min((now - startTime) / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          valEl.textContent = Math.round(eased * target);
+          if (progress < 1) requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+        countIO.unobserve(el);
+      }
+    });
+  }, { threshold: 0.5 });
+  counters.forEach(el => countIO.observe(el));
+</script>
+
+</body>
+</html>
